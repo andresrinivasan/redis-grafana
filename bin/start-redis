@@ -1,0 +1,7 @@
+#!/bin/sh
+
+ID=$(id -u)
+HOME=$(getent passwd "${ID}" | cut -f6 -d:)
+
+docker run --rm -d --user "${ID}" --volume "${HOME}"/lib/redis:/data --name redis --network host redislabs/redistimeseries:latest redis-server --loadmodule /usr/lib/redis/modules/redistimeseries.so  /data/redis.conf
+

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+ID=$(id -u)
+HOME=$(getent passwd "${ID}" | cut -f6 -d:)
+
+docker run --rm -d --user "${ID}" --volume "${HOME}"/lib/redisinsight:/db --network host --name redisinsight redislabs/redisinsight:latest
+
