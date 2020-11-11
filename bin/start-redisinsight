@@ -2,6 +2,11 @@
 
 ID=$(id -u)
 HOME=$(getent passwd "${ID}" | cut -f6 -d:)
+MOUNT="${HOME}"/lib/redisinsight
 
-docker run --rm -d --user "${ID}" --volume "${HOME}"/lib/redisinsight:/db --network host --name redisinsight redislabs/redisinsight:latest
+if [ ! -d "${MOUNT}" ]; then
+  mkdir -p "${MOUNT}"
+fi
+
+docker run --rm -d --user "${ID}" --volume "${MOUNT}":/db --network host --name redisinsight redislabs/redisinsight:latest
 

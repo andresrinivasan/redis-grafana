@@ -2,6 +2,12 @@
 
 ID=$(id -u)
 HOME=$(getent passwd "${ID}" | cut -f6 -d:)
+MOUNT="${HOME}"/lib/grafana
 
-docker run --rm -d --user "${ID}" --volume "${HOME}"/lib/grafana:/var/lib/grafana --name grafana --network host grafana/grafana:latest
+if [ ! -d "${MOUNT}" ]; then
+  mkdir -p "${MOUNT}"
+  ## XXX Add plugins and dashboards
+fi
+
+docker run --rm -d --user "${ID}" --volume "${MOUNT}":/var/lib/grafana --name grafana --network host grafana/grafana:latest
 

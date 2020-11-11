@@ -2,6 +2,12 @@
 
 ID=$(id -u)
 HOME=$(getent passwd "${ID}" | cut -f6 -d:)
+MOUNT="${HOME}"/lib/redis
 
-docker run --rm -d --user "${ID}" --volume "${HOME}"/lib/redis:/data --name redis --network host redislabs/redistimeseries:latest redis-server --loadmodule /usr/lib/redis/modules/redistimeseries.so  /data/redis.conf
+if [ ! -d "${MOUNT}" ]; then
+  mkdir -p "${MOUNT}"
+  wget -O - https://raw.githubusercontent.com/redis/redis/6.0/redis.conf >"${MOUNT}/redis.conf"
+fi
+
+docker run --rm -d --user "${ID}" --volume "${MOUNT}":/data --name redis --network host redislabs/redistimeseries:latest redis-server --loadmodule /usr/lib/redis/modules/redistimeseries.so  /data/redis.conf
 
